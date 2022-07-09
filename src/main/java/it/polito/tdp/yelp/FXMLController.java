@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import it.polito.tdp.yelp.model.Business;
 import it.polito.tdp.yelp.model.Model;
+import it.polito.tdp.yelp.model.RecensioneArchimax;
 import it.polito.tdp.yelp.model.Review;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,24 +39,47 @@ public class FXMLController {
     private ComboBox<String> cmbCitta; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbLocale"
-    private ComboBox<Business> cmbLocale; // Value injected by FXMLLoader
+    private ComboBox<String> cmbLocale; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
     
     @FXML
     void doRiempiLocali(ActionEvent event) {
-    	this.cmbLocale.getItems().clear();
+    		this.cmbLocale.getItems().clear();
     	String citta = this.cmbCitta.getValue();
     	if(citta != null) {
     		//TODO popolare la tendina dei locali per la città selezionata
-    		
+    		this.cmbLocale.getItems().addAll(this.model.getLocale(citta));
     	}
+    	if(citta == null) {
+    		txtResult.appendText("errore, inserire una citta");
+    	}
+    	
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	
+   
+    	txtResult.clear();
+    	
+    	String c = this.cmbCitta.getValue();
+    	String l = this.cmbLocale.getValue();
+    	
+    	if(l== null) {
+    		txtResult.appendText("errore, inserire un locale commerciale ");
+    	}
+    	
+    	String m = this.model.creaGrafo(c,l);
+    	txtResult.appendText(m);
+    	
+    	
+    	
+    	RecensioneArchimax r = this.model.getRecArcoMax();
+    	
+    	txtResult.appendText("\n\n Recensioe con archi max uscenti:\n "+r);
+ 
     }
 
     @FXML
@@ -75,5 +99,10 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    
+    	this.cmbCitta.getItems().addAll(this.model.getCitta());
+    	
+   
     }
 }
